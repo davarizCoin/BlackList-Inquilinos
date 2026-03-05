@@ -21,9 +21,6 @@ function App() {
                 <Link to="/reportar" className="text-sm font-semibold bg-brand-accent hover:bg-red-800 px-4 py-2 rounded-md transition-colors">
                   Fazer Denúncia
                 </Link>
-                <Link to="/admin" className="text-sm font-medium text-slate-300 hover:text-white px-2 py-2">
-                  Acesso Restrito
-                </Link>
               </nav>
             </div>
           </div>
