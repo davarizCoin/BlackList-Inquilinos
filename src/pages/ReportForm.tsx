@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Shield, UploadCloud, Link as LinkIcon, CheckCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-
 export default function ReportForm() {
     const [step, setStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,54 +52,11 @@ export default function ReportForm() {
 
         setIsSubmitting(true);
 
-        // 1. Gravar no Supabase
-        const { error: dbError } = await supabase.from('denuncias').insert([{
-            tenant_name: tenantName,
-            cpf: cpf,
-            debt_amount: debt,
-            infraction_clause: clausula,
-            report_relato: relato,
-            youtube_link: youtube,
-            status: 'pending' // Fica aguardando moderação Admin
-        }]);
-
-        if (dbError) {
-            console.error("Erro ao salvar no BD:", dbError);
-            setIsSubmitting(false);
-            return;
-        }
-
-        // 🚨 CONFIGURAÇÃO DO ROBÔ DO TELEGRAM (@BLinqui_bot) 🚨
-        const TELEGRAM_BOT_TOKEN = '8779027776:AAHDyJuMcpTO4z_y6aeklyHGyifwaw1svjQ';
-        const TELEGRAM_CHAT_ID = '1615853192';
-
-        const message = `🚨 *NOVA DENÚNCIA (BLACKLIST)* 🚨
-        
-*Inquilino:* ${tenantName || 'Não Informado'}
-*Prejuízo Declarado:* ${debt || 'Sem Dívida'}
-*Provas Anexadas:* Sim (Contrato e Fotos)
-
-Deseja analisar e aprovar para a Blacklist agora?
-Acesse: https://blacklist-inquilinos.com/admin`;
-
-        try {
-            await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: TELEGRAM_CHAT_ID,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
-            });
-        } catch (err) {
-            console.error("Erro ao enviar pro Telegram:", err);
-        }
-
+        // Simulando o tempo de upload e envio de forma fictícia para 100% local funcionalidade
         setTimeout(() => {
             setIsSubmitting(false);
             setIsSuccess(true);
-        }, 1500);
+        }, 2000);
     };
 
     if (isSuccess) {

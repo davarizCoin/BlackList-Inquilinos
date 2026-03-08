@@ -61,10 +61,8 @@ export default function Home() {
             return;
         }
 
-        // Verifica se é apenas números (CPF) ou Nome
+        // Verifica se é apenas números (CPF)
         const isCpfSearch = /^\d+$/.test(rawTerm.replace(/[.-]/g, ''));
-
-        let result;
 
         if (isCpfSearch) {
             // Se for CPF, pega apenas os números
@@ -73,16 +71,16 @@ export default function Home() {
                 alert('O CPF deve conter exatamente 11 números.');
                 return;
             }
-            result = database.find(p => p.cpf === cleanCpf && p.approved);
+            // Navega para o novo dashboard multi-fontes de busca
+            navigate(`/analise/${cleanCpf}`);
         } else {
-            // Busca por nome
-            result = database.find(p => p.name.toLowerCase().includes(rawTerm.toLowerCase()) && p.approved);
-        }
-
-        if (result) {
-            navigate(`/perfil/${result.id}`);
-        } else {
-            alert('Nenhum registro aprovado encontrado para esse termo.');
+            // Se for Nome, continua buscando internamente primeiro (Simplificação para MVP)
+            const result = database.find(p => p.name.toLowerCase().includes(rawTerm.toLowerCase()) && p.approved);
+            if (result) {
+                navigate(`/perfil/${result.id}`);
+            } else {
+                alert('Nenhum registro aprovado encontrado para esse NOME na base interna. Tente buscar pelo CPF para uma pesquisa completa.');
+            }
         }
     };
 

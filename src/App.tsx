@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import ReportForm from './pages/ReportForm';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
+import AnalysisDashboard from './pages/AnalysisDashboard';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/reportar" element={<ReportForm />} />
             <Route path="/perfil/:id" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/analise/:cpf" element={<AnalysisDashboard />} />
           </Routes>
         </main>
 

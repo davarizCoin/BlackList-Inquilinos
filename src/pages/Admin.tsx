@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Clock, CheckSquare, Trash2, Key, Shield } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 
 export default function Admin() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,48 +18,41 @@ export default function Admin() {
     };
 
     const fetchPendingReports = async () => {
-        const { data, error } = await supabase
-            .from('denuncias')
-            .select('*')
-            .eq('status', 'pending')
-            .order('created_at', { ascending: false });
+        // Simulando dados que viriam do Banco
+        const mockData = [
+            {
+                id: '1',
+                tenant_name: 'Marcos de Almeida',
+                cpf: '001.222.333-44',
+                report_relato: 'Inquilino destruiu as portas do armário embutido antes de entregar as chaves. Recusa-se a pagar o conserto.',
+                debt_amount: 'R$ 3.500,00',
+                infraction_clause: 'Cláusula 8ª (Conservação)',
+                youtube_link: ''
+            }
+        ];
 
-        if (error) {
-            console.error("Erro ao buscar denúncias:", error);
-            return;
-        }
-        setPendingReports(data || []);
+        setTimeout(() => {
+            setPendingReports(mockData);
+        }, 800);
     };
 
     const handleApprove = async (id: string) => {
         if (!confirm("Tem certeza que deseja APROVAR este Inquilino para a lista pública?")) return;
 
-        const { error } = await supabase
-            .from('denuncias')
-            .update({ status: 'approved' })
-            .eq('id', id);
-
-        if (!error) {
+        // Simulando update
+        setTimeout(() => {
             setPendingReports(prev => prev.filter(report => report.id !== id));
             alert("✅ Movido para a Blacklist Pública Oficial!");
-        } else {
-            alert("Erro ao aprovar.");
-        }
+        }, 500);
     };
 
     const handleReject = async (id: string) => {
         if (!confirm("Tem certeza que deseja APAGAR permanentemente esta denúncia sem aprovar?")) return;
 
-        const { error } = await supabase
-            .from('denuncias')
-            .delete()
-            .eq('id', id);
-
-        if (!error) {
+        // Simulando delete
+        setTimeout(() => {
             setPendingReports(prev => prev.filter(report => report.id !== id));
-        } else {
-            alert("Erro ao remover do banco.");
-        }
+        }, 500);
     };
 
     if (!isAuthenticated) {
