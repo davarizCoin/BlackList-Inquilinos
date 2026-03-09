@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, ShieldAlert, Scale, BadgeDollarSign, Loader2, CheckCircle2, AlertTriangle, Building2, UserCheck } from 'lucide-react';
+import { ArrowLeft, ShieldAlert, Scale, BadgeDollarSign, Loader2, CheckCircle2, AlertTriangle, Building2 } from 'lucide-react';
 import { database, type Report } from '../data/mockDatabase';
-import { checkLegalProcesses, checkCreditProtection, checkKycData, type LegalProcess, type CreditRestriction, type KycData } from '../data/mockExternalApis';
+import { checkLegalProcesses, checkCreditProtection, type LegalProcess, type CreditRestriction } from '../data/mockExternalApis';
 
 export default function AnalysisDashboard() {
     const { cpf } = useParams<{ cpf: string }>();
@@ -19,10 +19,6 @@ export default function AnalysisDashboard() {
     // State for Credit Protection
     const [creditRestrictions, setCreditRestrictions] = useState<CreditRestriction[]>([]);
     const [loadingCredit, setLoadingCredit] = useState(true);
-
-    // State for KYC
-    const [kycData, setKycData] = useState<KycData | null>(null);
-    const [loadingKyc, setLoadingKyc] = useState(true);
 
     useEffect(() => {
         if (!cpf) return;
@@ -44,12 +40,6 @@ export default function AnalysisDashboard() {
         checkCreditProtection(cpf).then((data) => {
             setCreditRestrictions(data);
             setLoadingCredit(false);
-        });
-
-        // 4. Check KYC API
-        checkKycData(cpf).then((data) => {
-            setKycData(data);
-            setLoadingKyc(false);
         });
 
     }, [cpf]);
@@ -110,8 +100,8 @@ export default function AnalysisDashboard() {
                     </div>
                 </div>
 
-                {/* 4-Column Grid for Data Sources */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+                {/* 3-Column Grid for Data Sources */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                     {/* COL 1: Internal Database (Black Lista Home) */}
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
@@ -241,57 +231,6 @@ export default function AnalysisDashboard() {
                                     <CheckCircle2 className="w-12 h-12 mb-3 opacity-30" />
                                     <h3 className="font-bold text-slate-600 mb-1">Nome Limpo</h3>
                                     <p className="text-xs text-slate-500">Sem negatições ativas nos bureaus (SPC/Serasa/BoaVista) ligados a esse documento.</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* COL 4: KYC & Fraude */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                        <div className="bg-slate-200 text-slate-800 p-4 flex items-center gap-3 border-b border-slate-300">
-                            <UserCheck className="w-6 h-6 text-slate-700" />
-                            <h2 className="font-bold text-lg">Biometria & KYC</h2>
-                        </div>
-                        <div className="p-6 flex-grow bg-slate-50/50">
-                            {loadingKyc ? (
-                                <div className="flex flex-col items-center justify-center h-full text-slate-400 py-16">
-                                    <Loader2 className="w-8 h-8 animate-spin mb-3" />
-                                    <p className="text-sm font-medium">Cruzando dados na Receita...</p>
-                                </div>
-                            ) : kycData ? (
-                                <div className="space-y-4">
-                                    <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-                                        <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Filiação Verificada</h4>
-                                        <p className="text-sm font-medium text-slate-800 mb-1"><span className="text-slate-500">Pai:</span> {kycData.fatherName}</p>
-                                        <p className="text-sm font-medium text-slate-800"><span className="text-slate-500">Mãe:</span> {kycData.motherName}</p>
-                                    </div>
-
-                                    {(kycData.phoneAlert || kycData.addressAlert) ? (
-                                        <div className="space-y-3">
-                                            {kycData.phoneAlert && (
-                                                <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded-r-lg text-sm text-orange-800">
-                                                    <span className="font-bold flex items-center gap-1 mb-1"><AlertTriangle className="w-4 h-4" /> Alerta Telefônico</span>
-                                                    {kycData.phoneAlert.replace('⚠️ ', '')}
-                                                </div>
-                                            )}
-                                            {kycData.addressAlert && (
-                                                <div className="bg-red-50 border-l-4 border-red-400 p-3 rounded-r-lg text-sm text-red-800">
-                                                    <span className="font-bold flex items-center gap-1 mb-1"><AlertTriangle className="w-4 h-4" /> Alerta de Domicílios</span>
-                                                    {kycData.addressAlert.replace('⚠️ ', '')}
-                                                </div>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center py-6 text-emerald-600 text-center">
-                                            <CheckCircle2 className="w-8 h-8 mb-2 opacity-50" />
-                                            <p className="text-xs text-emerald-800 text-center font-medium">Comportamento de dados cadastrais dentro da normalidade.</p>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center h-full text-slate-400 py-16 text-center px-4">
-                                    <AlertTriangle className="w-12 h-12 mb-3 opacity-30" />
-                                    <p className="text-xs text-slate-500">Não foi possível localizar KYC.</p>
                                 </div>
                             )}
                         </div>
