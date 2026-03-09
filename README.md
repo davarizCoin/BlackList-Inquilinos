@@ -1,53 +1,73 @@
-# Black Lista Home 🕵️‍♂️🏠
+# React + TypeScript + Vite
 
-O **Black Lista Home** é um sistema B2B (Mínimo Produto Viável) projetado para **proteger o patrimônio de imobiliárias e proprietários** através da análise de crédito, comportamento e dados antifraude de potenciais inquilinos.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 🚀 Funcionalidades (Features)
+Currently, two official plugins are available:
 
-*   🔍 **Dashboard Multi-Fonte (KYC & Background Check):**
-    *   **Base de Imobiliárias:** Consulta uma base de dados colaborativa (simulada) de maus inquilinos.
-    *   **Busca Extra-Judicial:** Varredura em processos (ex: Ações de Despejo) nos diários oficiais dos Tribunais (TJSP, TJPR, etc).
-    *   **Birôs de Crédito:** Verificação de nome sujo e dívidas ativadas (Simulação de SPC/Serasa/BoaVista).
-    *   **Biometria & KYC:** Validação antifraude mostrando Alertas Telefônicos (muitos números em pouco tempo) e Alertas de Domicílio, além de checagem de filiação.
-*   🚦 **Motor de Risco:** Algoritmo visual que classifica o prospecto automaticamente como "ALTO RISCO" ou "NADA CONSTA" baseado na gravidade dos apontamentos encontrados.
-*   📝 **Canal de Denúncias:** Formulário passo-a-passo para imobiliárias e proprietários enviarem relatos detalhados de danos ou inadimplência, permitindo anexo de provas e links de vídeo.
-*   🔐 **Cofre Administrativo:** Painel de moderação para administradores avaliarem ("Aprovar" ou "Rejeitar") as denúncias recebidas antes que elas se tornem públicas na plataforma colaborativa.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 💻 Tecnologias Utilizadas
+## React Compiler
 
-*   **Frontend:** React (Vite)
-*   **Estilização:** Tailwind CSS
-*   **Roteamento:** React Router DOM
-*   **Ícones:** Lucide React
-*   **Dados:** Simulação Local (Mocks robustos com `setTimeout` para emular chamadas assíncronas de API)
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-*Nota de Produto: O sistema foi projetado inicialmente para integração com Supabase (Banco de Dados em Nuvem) e Telegram Bots para notificações em tempo real. No formato atual de MVP de demonstração local, as integrações externas foram desacopladas para garantir que a aplicação rode 100% no navegador (Localhost) sem telas de erro.*
+## Expanding the ESLint configuration
 
-## 🛠️ Como Executar na sua Máquina Local (Localhost)
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-Pré-requisito: Node.js instalado na máquina.
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-1.  Clone o repositório ou baixe a pasta.
-2.  Abra o terminal na pasta do projeto e instale as dependências:
-    ```bash
-    npm install
-    ```
-3.  Inicie o servidor de desenvolvimento:
-    ```bash
-    npm run dev
-    ```
-4.  Abra o navegador no endereço indicado (geralmente `http://localhost:5173`).
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-## 🧪 Casos de Teste Sugeridos (Mock Data)
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-Para visualizar as funcionalidades em ação, sugerimos as seguintes simulações:
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-*   **Busca - Inquilino de Alto Risco (Fraude + Despejo):** Digite o CPF **`123.123.123-89`** (ou apenas `12312312389`) na busca. Aparecerão processos no TJSP, dívidas altas e alertas vermelhos de KYC (troca suspeita de telefones).
-*   **Busca - Inquilino de Score Prejudicado:** Digite o CPF **`456.456.456-00`** na busca. Aparecerão processos no TJPR (condomínio em atraso) e alertas laranjas de mudança de domicílio.
-*   **Área de Logins Administrativa:**
-    *   Rota: `/admin`
-    *   **Usuário:** `davariz`
-    *   **Senha Master:** `garanhao77`
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## ⚖️ Conformidade LGPD
-O projeto Black Lista Home opera estritamente focando na análise de Risco de Crédito e Proteção ao Crédito em Operações Imobiliárias, sendo estas hipóteses válidas de tratamento de dados sob a LGPD no Brasil para entidades imobiliárias sob termo de uso.
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
